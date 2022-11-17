@@ -1,113 +1,109 @@
-import { GithubUser } from "./GithubUser.js"
+import { GithubUser } from "./GithubUser.js";
 
 export class Favorites {
-  constructor(root){
-    this.root = document.querySelector(root)
-    this.load()
+  constructor(root) {
+    this.root = document.querySelector(root);
+    this.load();
   }
 
-  load(){
-    this.entries = JSON.parse(localStorage.getItem('@github-favorites:'))||[]
+  load() {
+    this.entries = JSON.parse(localStorage.getItem("@github-favorites:")) || [];
   }
 
-  save(){
-    localStorage.setItem('@github-favorites:',JSON.stringify(this.entries))
+  save() {
+    localStorage.setItem("@github-favorites:", JSON.stringify(this.entries));
   }
-  
-  async add(username){
-    try{
 
-      const userExists = this.entries.find(entry => entry.login === username)
+  async add(username) {
+    try {
+      const userExists = this.entries.find((entry) => entry.login === username);
 
-      if(userExists){
-        throw new Error('Usuario já existe')
+      if (userExists) {
+        throw new Error("Usuario já existe");
       }
 
-      const user = await GithubUser.search(username)
+      const user = await GithubUser.search(username);
 
-      if(user.login === undefined){
-        throw new Error('Usuário não encontrado!')
+      if (user.login === undefined) {
+        throw new Error("Usuário não encontrado!");
       }
 
-      this.entries = [user, ...this.entries]
-      this.update()
-      this.save()
-      this.inputArea.value=''
-
-    }catch(error){
-      alert(error.message)
+      this.entries = [user, ...this.entries];
+      this.update();
+      this.save();
+      this.inputArea.value = "";
+    } catch (error) {
+      alert(error.message);
     }
   }
 
-
-
-  delete(user){
-    this.entries = this.entries.filter(entry => entry.login !== user.login)
-    this.update()
-    this.save()
-    
+  delete(user) {
+    this.entries = this.entries.filter((entry) => entry.login !== user.login);
+    this.update();
+    this.save();
   }
 }
 
-export class FavoritesView extends Favorites{
-  constructor(root){
-    super(root)
-  
-    this.tbody = this.root.querySelector('table tbody')
+export class FavoritesView extends Favorites {
+  constructor(root) {
+    super(root);
 
-    this.update()
-    this.onadd()
+    this.tbody = this.root.querySelector("table tbody");
+
+    this.update();
+    this.onadd();
   }
 
-  onadd(){
-    const addButton = this.root.querySelector('.search button')
-    this.inputArea = document.querySelector('#input-search')
-    addButton.onclick = () =>{
-      const { value } = this.inputArea
+  onadd() {
+    const addButton = this.root.querySelector(".search button");
+    this.inputArea = document.querySelector("#input-search");
+    addButton.onclick = () => {
+      const { value } = this.inputArea;
 
-      this.add(value)
-    }
+      this.add(value);
+    };
 
-    inputArea.addEventListener("keypress", (e) => {
-      if(e.key === 'Enter') {
+    this.inputArea.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
         addButton.click();
       }
     });
-
   }
 
-  update(){
-    this.removeAllTr()
+  update() {
+    this.removeAllTr();
 
-    this.entries.forEach( user => {
-      const row = this.createRow()
-      row.querySelector('.user img').src = `https://github.com/${user.login}.png`
-      row.querySelector('.user img').alt = `Imagem de ${user.name}`
-      row.querySelector('.user-info a').href = `https://github.com/${user.login}`
-      row.querySelector('.user-info p').textContent = user.name
-      row.querySelector('.user-info a span').textContent = user.login
-      row.querySelector('.repositories').textContent = user.public_repos
-      row.querySelector('.followers').textContent = user.followers
+    this.entries.forEach((user) => {
+      const row = this.createRow();
+      row.querySelector(
+        ".user img"
+      ).src = `https://github.com/${user.login}.png`;
+      row.querySelector(".user img").alt = `Imagem de ${user.name}`;
+      row.querySelector(
+        ".user-info a"
+      ).href = `https://github.com/${user.login}`;
+      row.querySelector(".user-info p").textContent = user.name;
+      row.querySelector(".user-info a span").textContent = `/${user.login}`;
+      row.querySelector(".repositories").textContent = user.public_repos;
+      row.querySelector(".followers").textContent = user.followers;
 
-      row.querySelector('.remove').onclick = () => {
-        const isOk = confirm('Tem certeza que deseja deletar uma linha?')
-        if(isOk){
-          this.delete(user)
+      row.querySelector(".remove").onclick = () => {
+        const isOk = confirm("Tem certeza que deseja deletar uma linha?");
+        if (isOk) {
+          this.delete(user);
         }
-        
-      }
-      this.tbody.append(row)
-    })
-    console.log(this.entries.length)
-    if(this.entries.length == 0){
-      document.querySelector('.empty').classList.remove('hide')
-    }else{
-      document.querySelector('.empty').classList.add('hide')
+      };
+      this.tbody.append(row);
+    });
+    if (this.entries.length == 0) {
+      document.querySelector(".empty").classList.remove("hide");
+    } else {
+      document.querySelector(".empty").classList.add("hide");
     }
   }
 
-  createRow(){
-    const tr = document.createElement('tr')
+  createRow() {
+    const tr = document.createElement("tr");
 
     tr.innerHTML = `
     <td class="user">
@@ -124,15 +120,14 @@ export class FavoritesView extends Favorites{
       9589
     </td>
     <td><button class="remove">Remover</button></td>
-    `
+    `;
 
-    return tr
+    return tr;
   }
 
-  removeAllTr(){
-    this.tbody.querySelectorAll('tr')
-      .forEach((tr)=>{
-        tr.remove()
-      })
+  removeAllTr() {
+    this.tbody.querySelectorAll("tr").forEach((tr) => {
+      tr.remove();
+    });
   }
 }
