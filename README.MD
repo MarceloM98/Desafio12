@@ -17,7 +17,7 @@ Projeto proposto pela rocketseat no modulo sobre javascript POO.
 <br>
 
 <p align="center">
-  <img alt="Home" src="https://github.com/MarceloM98/Desafio12/raw/master/screenshots/empty.png" width="100%">
+  <img alt="Home" src="https://github.com/MarceloM98/Desafio12/raw/master/screenshots/emptyn.png" width="100%">
   <img alt="Exploração" src="https://github.com/MarceloM98/Desafio12/raw/master/screenshots/table.png" width="100%">
 </p>
 
